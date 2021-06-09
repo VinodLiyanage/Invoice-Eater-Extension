@@ -1,0 +1,44 @@
+{
+    "name": "Invoice Eater",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "Auto fill Invoice Number and Invoice Quantity",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Invoice Eater",
+        "default_icon": {   
+          "16":"/assets/images/logo.png",
+          "24":"/assets/images/logo.png",
+          "32":"/assets/images/logo.png",
+          "128":"/assets/images/logo.png"                    
+      }
+    },
+    "permissions":[
+        "activeTab",
+        "scripting",
+        "tabs",
+        "storage"
+    ],
+    "content_scripts" : [
+      {
+        "matches": ["<all_urls>"],
+        "run_at": "document_idle",
+        "js": [
+          "/assets/js/contentScripts/injector.js"
+        ]
+      }
+    ],
+    "host_permissions": [
+        "<all_urls>",
+        "https://dsm.commercehub.com/*"
+    ],
+    "icons": {                    
+      "16":"/assets/images/logo.png",
+      "24":"/assets/images/logo.png",
+      "32":"/assets/images/logo.png",
+      "128":"/assets/images/logo.png"
+    }
+}
