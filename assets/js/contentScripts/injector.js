@@ -19,74 +19,78 @@ function injector(orderElementObjectArray) {
   }
 
   function injectQuantities(element, orderIndex) {
-    let isElementFound = false;
+    
+    function inject(rowElem) {
+      if (!(rowElem && rowElem instanceof HTMLElement)) return;
 
-    const findElementUsingItemId = () => {
-      const inputArray = Array.from(
-        element.querySelectorAll(
-          "table.fw_widget_table tbody tr.fw_widget_tablerow-odd td input[name]"
-        ) || []
-      );
-      let itemId = null;
+      let isElementFound = false;
+      
+      const findElementUsingItemId = (rowElem) => {
+        const inputArray = Array.from(
+          rowElem.querySelectorAll("td input[name]") || []
+        );
+        let itemId = null;
 
-      if (inputArray.length) {
-        inputArray.forEach((inputElm) => {
-          if (!(inputElm && inputElm instanceof HTMLElement)) return;
-          const re = /(?:.+?)\.(?:item\((\d+)\))?/gim;
-          const itemIdArr = Array.from(re.exec(inputElm.name) || []);
-          if (itemIdArr && itemIdArr.length > 1) {
-            itemId = itemIdArr[1];
-            return;
-          }
-        });
+        if (inputArray.length) {
+          inputArray.forEach((inputElm) => {
+            if (!(inputElm && inputElm instanceof HTMLElement)) return;
+            const re = /(?:.+?)\.(?:item\((\d+)\))?/gim;
+            const itemIdArr = Array.from(re.exec(inputElm.name) || []);
+            if (itemIdArr && itemIdArr.length > 1) {
+              itemId = itemIdArr[1];
+              return;
+            }
+          });
+        }
+        if (!itemId) return;
+
+        const INVOICE_QUANTITY_ID = `order(${orderIndex}).item(${itemId}).invoiced`;
+        const inputQuantity = document.getElementById(INVOICE_QUANTITY_ID);
+
+        if (!(inputQuantity && inputQuantity instanceof HTMLElement)) return;
+
+        let qty =
+          inputQuantity?.parentElement?.previousElementSibling?.innerText;
+        if (qty && qty.length) {
+          isElementFound = true;
+          qty = qty.trim();
+          inputQuantity.value = qty;
+          inputQuantity.dispatchEvent(new Event("change"));
+        }
+      };
+
+      const findElementUsingStucture = (rowElem) => {
+        if (!rowElem.hasChildNodes()) return;
+
+        const lastElm = rowElem.lastElementChild;
+
+        const inputQuantity = lastElm.querySelector("input[name]");
+        let qty = lastElm?.previousElementSibling?.innerText;
+
+        if (qty && qty.length) {
+          qty = qty.trim();
+          isElementFound = true;
+          inputQuantity.value = qty;
+          inputQuantity.dispatchEvent(new Event("change"));
+        }
+      };
+
+      findElementUsingItemId(rowElem);
+
+      if (!isElementFound) {
+        findElementUsingStucture(rowElem);
       }
-      if (!itemId) return;
-
-      const INVOICE_QUANTITY_ID = `order(${orderIndex}).item(${itemId}).invoiced`;
-      const inputQuantity = document.getElementById(INVOICE_QUANTITY_ID);
-
-      if (!(inputQuantity && inputQuantity instanceof HTMLElement)) return;
-
-      let qty = inputQuantity?.parentElement?.previousElementSibling?.innerText;
-      if (qty && qty.length) {
-        isElementFound = true;
-        qty = qty.trim();
-        inputQuantity.value = qty;
-        inputQuantity.dispatchEvent(new Event("change"));
-      }
-    };
-
-    const findElementUsingStucture = () => {
-      const parentElement = element.querySelector(
-        "table.fw_widget_table tbody tr.fw_widget_tablerow-odd"
-      );
-      if (
-        !(
-          parentElement &&
-          parentElement instanceof HTMLElement &&
-          parentElement.hasChildNodes()
-        )
-      )
-        return;
-
-      const lastElm = parentElement.lastElementChild;
-
-      const inputQuantity = lastElm.querySelector("input[name]");
-      let qty = lastElm?.previousElementSibling?.innerText;
-
-      if (qty && qty.length) {
-        qty = qty.trim();
-        isElementFound = true;
-        inputQuantity.value = qty;
-        inputQuantity.dispatchEvent(new Event("change"));
-      }
-    };
-
-    findElementUsingItemId();
-
-    if (!isElementFound) {
-      findElementUsingStucture();
     }
+
+    const trArray = Array.from(
+      element.querySelectorAll("table.fw_widget_table tbody tr")
+    );
+    if (!(trArray && trArray.length > 1)) return;
+
+    trArray.slice(1).forEach((elem) => {
+      if (!(elem && elem instanceof HTMLElement)) return;
+      inject(elem);
+    });
   }
 
   orderElementObjectArray.forEach((elmObject) => {
