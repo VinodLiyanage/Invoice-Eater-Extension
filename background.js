@@ -1,4 +1,12 @@
-const log = console.log;
+/***********************************************************************
+  
+  https://github.com/VinodLiyanage/Invoice-Eater-Extension
+  -------------------------------- (C) ---------------------------------
+                           Author: Vinod Liyanage
+                         <vinodsliyanage@gmail.com>
+************************************************************************/
+
+
 
 const tabIdObject = {};
 
@@ -30,7 +38,6 @@ async function executeContentScript(tabId) {
         }
       );
     } catch (e) {
-      console.error(e);
       reject(false);
     }
   });
@@ -42,30 +49,20 @@ function listener(listenerCallback) {
     sendResponse({ farewell: "goodbye" });
 
     const targetUrl = request.targetUrl;
-
-    listenerCallback(targetUrl);
+    if(targetUrl) {
+      listenerCallback(targetUrl);
+    }
     return true;
   });
 }
 
 async function listenerCallback(targetUrl) {
-  log("im in background", targetUrl);
   const tabId = await navigator(targetUrl);
-
-  tabIdObject[tabId] = true;
-//   await executeContentScript(tabId);
-  log("tabId", tabId);
+  if(tabId) {
+    tabIdObject[tabId] = true;
+  }
 }
 
 (() => {
   listener(listenerCallback);
-
-//   chrome.tabs.onUpdated.addListener(async (updatedTabId, changeInfo) => {
-//     if (changeInfo.status === "complete") {
-//       if (tabIdObject[updatedTabId]) {
-//         await executeContentScript(updatedTabId);
-//       }
-//     }
-//     return true;
-//   });
 })();

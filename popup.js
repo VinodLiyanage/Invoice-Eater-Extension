@@ -1,4 +1,11 @@
-const log = console.log;
+/***********************************************************************
+  
+  https://github.com/VinodLiyanage/Invoice-Eater-Extension
+  -------------------------------- (C) ---------------------------------
+                           Author: Vinod Liyanage
+                         <vinodsliyanage@gmail.com>
+************************************************************************/
+
 
 function submit() {
   const inputTargetUrl = document.getElementById("inputTargetUrl");
@@ -7,17 +14,25 @@ function submit() {
   if (!(inputTargetUrl instanceof HTMLElement)) return;
   if (!(submitBtn instanceof HTMLElement)) return;
 
+  const handleInput = (e) => {
+    let value = e.target.value;
+
+    if (value && value.length) {
+      value = value.trim();
+      chrome.storage.local.set({ targetUrl: value });
+    }
+  };
+
   const handleLoad = () => {
     const targetUrl = (inputTargetUrl.value || "").trim();
     if (!(targetUrl && targetUrl.length)) return;
-
-    chrome.storage.local.set({ targetUrl });
 
     chrome.runtime.sendMessage({ targetUrl }, function (response) {
       console.log(response);
     });
   };
 
+  inputTargetUrl.addEventListener("input", handleInput);
   submitBtn.addEventListener("click", handleLoad);
 }
 
@@ -33,7 +48,6 @@ function resetInput() {
       inputTargetUrl instanceof HTMLElement
     )
   ) {
-    console.error("[reset] an error occured!");
     return;
   }
   const handleReset = () => {

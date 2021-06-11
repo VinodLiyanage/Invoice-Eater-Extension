@@ -1,4 +1,11 @@
-const log = console.log;
+/***********************************************************************
+  
+  https://github.com/VinodLiyanage/Invoice-Eater-Extension
+  -------------------------------- (C) ---------------------------------
+                           Author: Vinod Liyanage
+                         <vinodsliyanage@gmail.com>
+************************************************************************/
+
 
 function injector(orderElementObjectArray) {
   if (!(orderElementObjectArray && orderElementObjectArray.length)) return;
@@ -12,7 +19,7 @@ function injector(orderElementObjectArray) {
     const inputInvoice = document.getElementById(INVOICE_INPUT_ID);
     if (!(inputInvoice && inputInvoice instanceof HTMLElement)) return;
     inputInvoice.value = (orderId || "").trim();
-    inputInvoice.dispatchEvent(new CustomEvent('change'))
+    inputInvoice.dispatchEvent(new Event("change"));
   }
 
   function injectQuantities(element, orderIndex) {
@@ -33,7 +40,6 @@ function injector(orderElementObjectArray) {
           const itemIdArr = Array.from(re.exec(inputElm.name) || []);
           if (itemIdArr && itemIdArr.length > 1) {
             itemId = itemIdArr[1];
-            log("itemId", itemId);
             return;
           }
         });
@@ -50,8 +56,7 @@ function injector(orderElementObjectArray) {
         isElementFound = true;
         qty = qty.trim();
         inputQuantity.value = qty;
-        inputQuantity.dispatchEvent(new CustomEvent('change'))
-        log("elmentfound in method 1");
+        inputQuantity.dispatchEvent(new Event("change"));
       }
     };
 
@@ -77,14 +82,8 @@ function injector(orderElementObjectArray) {
         qty = qty.trim();
         isElementFound = true;
         inputQuantity.value = qty;
-        inputQuantity.dispatchEvent(new CustomEvent('change'))
-        log("elmentfound in method 2");
+        inputQuantity.dispatchEvent(new Event("change"));
       }
-    };
-
-    //? not implemented yet.
-    const findElementUsingColumnName = () => {
-      log("elmentfound in method 3");
     };
 
     findElementUsingItemId();
@@ -92,14 +91,7 @@ function injector(orderElementObjectArray) {
     if (!isElementFound) {
       findElementUsingStucture();
     }
-    if (!isElementFound) {
-      findElementUsingColumnName();
-    }
   }
-
-  const orderForm = document.querySelector(
-    'form[name="GeneralOrderRealmForm"][id="primaryForm"]'
-  );
 
   orderElementObjectArray.forEach((elmObject) => {
     const { element, orderId, orderIndex } = elmObject;
@@ -108,14 +100,10 @@ function injector(orderElementObjectArray) {
     if (element && orderId && orderIndex) {
       injectInvoiceNumber(orderId, orderIndex);
       injectQuantities(element, orderIndex);
-    
     }
   });
-
-  
-  // dispatchEvent(new CustomEvent('change'))
-
 }
+
 function getOrderQueue() {
   const orderElementObjectArray = [];
 
@@ -123,7 +111,6 @@ function getOrderQueue() {
     'form[name="GeneralOrderRealmForm"][id="primaryForm"]'
   );
   if (!(orderForm && orderForm instanceof HTMLElement)) {
-    console.error("orderForm not found!");
     return;
   }
   const orderElementArray = Array.from(
@@ -137,7 +124,6 @@ function getOrderQueue() {
       "div.fw_widget_windowtag_topbar div.framework_fiftyfifty_left_justify span.no_emphasis_label a.simple_link"
     );
     if (!(orderIdElement && orderIdElement instanceof HTMLElement)) {
-      console.error("orderIdElement not found!");
       return;
     }
 
@@ -156,7 +142,7 @@ function getOrderQueue() {
           .split("Hub_PO=")[1]
           .trim();
       } catch (e) {
-        console.error(e);
+        null
       }
 
       if (refIdFromPrevElement && refIdFromPrevElement.length) {
@@ -165,7 +151,7 @@ function getOrderQueue() {
         orderIndex = refIdFromOrderElement;
       } else return;
     } catch (e) {
-      console.error(e);
+      null
     }
 
     if (!(orderIndex && orderIndex.length)) return;
@@ -174,7 +160,6 @@ function getOrderQueue() {
       orderId = orderId.trim();
       orderIndex = orderIndex.trim();
     } catch (e) {
-      console.error("[injector] an error occured!", e);
       return;
     }
 
@@ -186,13 +171,10 @@ function getOrderQueue() {
       });
     }
   });
-
-  log("orderElementObjectArray", orderElementObjectArray);
   return orderElementObjectArray;
 }
 
 (async () => {
-  log("content script started!");
   const orderElementObjectArray = getOrderQueue();
   injector(orderElementObjectArray);
 })();
