@@ -24,7 +24,7 @@
     ],
     "content_scripts" : [
       {
-        "matches": ["<all_urls>", "https://dsm.commercehub.com/*"],
+        "matches": ["https://dsm.commercehub.com/*"],
         "run_at": "document_idle",
         "js": [
           "/assets/js/contentScripts/injector.js"
@@ -32,7 +32,6 @@
       }
     ],
     "host_permissions": [
-        "<all_urls>",
         "https://dsm.commercehub.com/*"
     ],
     "icons": {                    

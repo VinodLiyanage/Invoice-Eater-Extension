@@ -6,13 +6,10 @@
                          <vinodsliyanage@gmail.com>
 ************************************************************************/
 
-
-
 const tabIdObject = {};
 
 //* creates a new tab that contains the target webpage.
 async function navigator(targetUrl) {
-
   /**
    * @param {string} targetUrl - the webpage url that need to fill.
    * @returns {string} id - tabs' id
@@ -49,7 +46,7 @@ function listener(listenerCallback) {
     sendResponse({ farewell: "goodbye" });
 
     const targetUrl = request.targetUrl;
-    if(targetUrl) {
+    if (targetUrl) {
       listenerCallback(targetUrl);
     }
     return true;
@@ -58,7 +55,7 @@ function listener(listenerCallback) {
 
 async function listenerCallback(targetUrl) {
   const tabId = await navigator(targetUrl);
-  if(tabId) {
+  if (tabId) {
     tabIdObject[tabId] = true;
   }
 }

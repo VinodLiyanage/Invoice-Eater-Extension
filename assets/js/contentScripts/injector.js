@@ -6,12 +6,8 @@
                          <vinodsliyanage@gmail.com>
 ************************************************************************/
 
-
 function injector(orderElementObjectArray) {
   if (!(orderElementObjectArray && orderElementObjectArray.length)) return;
-
-  //order(3044612952).invoicenumber
-  //order(3044612952).item(3052881896).invoiced
 
   function injectInvoiceNumber(orderId, orderIndex) {
     const INVOICE_INPUT_ID = `order(${orderIndex}).invoicenumber`;
@@ -142,7 +138,7 @@ function getOrderQueue() {
           .split("Hub_PO=")[1]
           .trim();
       } catch (e) {
-        null
+        null;
       }
 
       if (refIdFromPrevElement && refIdFromPrevElement.length) {
@@ -151,7 +147,7 @@ function getOrderQueue() {
         orderIndex = refIdFromOrderElement;
       } else return;
     } catch (e) {
-      null
+      null;
     }
 
     if (!(orderIndex && orderIndex.length)) return;

@@ -6,7 +6,6 @@
                          <vinodsliyanage@gmail.com>
 ************************************************************************/
 
-
 function submit() {
   const inputTargetUrl = document.getElementById("inputTargetUrl");
   const submitBtn = document.getElementById("submit");
@@ -19,8 +18,8 @@ function submit() {
 
     if (value && value.length) {
       value = value.trim();
-      chrome.storage.local.set({ targetUrl: value });
     }
+    chrome.storage.local.set({ targetUrl: value });
   };
 
   const handleLoad = () => {
