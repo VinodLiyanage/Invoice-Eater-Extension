@@ -1,20 +1,19 @@
-/***********************************************************************
-  
-  https://github.com/VinodLiyanage/Invoice-Eater-Extension
-  -------------------------------- (C) ---------------------------------
-                           Author: Vinod Liyanage
-                         <vinodsliyanage@gmail.com>
-************************************************************************/
+document.addEventListener("DOMContentLoaded", () => {
+  restoreInput();
+  handler();
+});
 
-function submit() {
+function handler() {
   const inputTargetUrl = document.getElementById("inputTargetUrl");
   const submitBtn = document.getElementById("submit");
+  const resetBtn = document.getElementById("reset");
 
   if (!(inputTargetUrl instanceof HTMLElement)) return;
   if (!(submitBtn instanceof HTMLElement)) return;
+  if (!(resetBtn instanceof HTMLElement)) return;
 
   const handleInput = (e) => {
-    let value = e.target.value;
+    let value = e.target?.value;
 
     if (value && value.length) {
       value = value.trim();
@@ -27,33 +26,19 @@ function submit() {
     if (!(targetUrl && targetUrl.length)) return;
 
     chrome.runtime.sendMessage({ targetUrl }, function (response) {
-      console.log(response);
+      return response;
     });
   };
 
-  inputTargetUrl.addEventListener("input", handleInput);
-  submitBtn.addEventListener("click", handleLoad);
-}
-
-function resetInput() {
-  const resetBtn = document.getElementById("reset");
-  const inputTargetUrl = document.getElementById("inputTargetUrl");
-
-  if (
-    !(
-      resetBtn &&
-      inputTargetUrl &&
-      resetBtn instanceof HTMLElement &&
-      inputTargetUrl instanceof HTMLElement
-    )
-  ) {
-    return;
-  }
   const handleReset = () => {
     inputTargetUrl.value = "";
     chrome.storage.local.remove("targetUrl");
   };
+  
+  inputTargetUrl.addEventListener("input", handleInput);
+  submitBtn.addEventListener("click", handleLoad);
   resetBtn.addEventListener("click", handleReset);
+
 }
 
 function restoreInput() {
@@ -62,16 +47,9 @@ function restoreInput() {
   chrome.storage.local.get("targetUrl", (result) => {
     const targetInputValue = result.targetUrl;
 
-    if (!!targetInputValue) {
+    if (targetInputValue) {
       inputTargetUrl.value = targetInputValue;
     }
   });
 }
 
-(() => {
-  document.addEventListener("DOMContentLoaded", () => {
-    restoreInput();
-    submit();
-    resetInput();
-  });
-})();
