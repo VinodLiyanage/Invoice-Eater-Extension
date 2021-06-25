@@ -1,10 +1,26 @@
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+let absoluteTabId = null
+
+chrome.runtime.onMessage.addListener(handleMessage);
+chrome.tabs.onUpdated.addListener(handleTabUpdate);
+
+async function handleMessage(request, sender, sendResponse) {
   sendResponse(true);
   if (!sender.tab && request.targetUrl) {
-    executeScript(await navigator(request.targetUrl));
+    absoluteTabId = await navigator(request.targetUrl);
   }
   return true;
-});
+}
+
+function handleTabUpdate(tabId, changeInfo) {
+  if (
+    absoluteTabId &&
+    absoluteTabId === tabId &&
+    changeInfo.status === "complete"
+  ) {
+    executeScript(absoluteTabId);
+    absoluteTabId = null;
+  }
+}
 
 async function navigator(targetUrl) {
   if (!(targetUrl && targetUrl.length)) return;
